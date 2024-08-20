@@ -1,22 +1,50 @@
 (function() {
-    let gameMode = true;
+    let gameMode = true, enemyGenTimeout = 10;
 
     function update() {
+        let i;
         Background.update();
 
         if(gameMode) {
+            Collision.runAll();
+
+            if(!enemyGenTimeout) {
+                enemyGenTimeout = 10;
+                i = Alien.pool.length;
+                while(i--) {
+                    if(!Alien.pool[i].active) {
+                        Alien.pool[i].init();
+                        break;
+                    }
+                }
+            }
+            enemyGenTimeout--;
+
             player.update();
+
+            i = Alien.pool.length;
+            while(i--) Alien.pool[i].update();
+
+            i = Shrapnel.pool.length;
+            while(i--) Shrapnel.pool[i].update();
         } else {
 
         }
     }
 
     function render() {
+        let i;
         Graphics.clear();
         Background.render();
 
         if(gameMode) {
             player.render();
+
+            i = Alien.pool.length;
+            while(i--) Alien.pool[i].render();
+
+            i = Shrapnel.pool.length;
+            while(i--) Shrapnel.pool[i].render();
         } else {
 
         }
@@ -40,6 +68,8 @@
             await Graphics.testAndSetRefreshMode();
 
             Control.init();
+            Alien.poolInit();
+            Shrapnel.poolInit();
             player.start();
             Background.refresh();
 

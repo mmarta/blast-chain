@@ -7,6 +7,9 @@ class Player extends DrawableObject {
         this.h = Player.SPRITE_SIZE;
         this.y = Player.START_Y;
         this.score = 0;
+        this.zapped = false;
+        this.comboMultiplier = 1;
+        this.comboMultiplierTime = 0;
         this.laserTime = 0;
         this.lasers = [
             new PlayerLaser(),
@@ -28,6 +31,16 @@ class Player extends DrawableObject {
         this.score = 0;
         this.laserTime = 0;
         this.active = true;
+    }
+
+    addScore(score, useComboMultiplier) {
+        if(useComboMultiplier) {
+            if(this.comboMultiplier < 50) this.comboMultiplier++;
+            this.comboMultiplierTime = 60;
+            this.score += (score * this.comboMultiplier);
+        } else this.score += score;
+
+        if(this.score >= System.hi) System.hi = this.score;
     }
 
     update() {
@@ -82,6 +95,12 @@ class Player extends DrawableObject {
                 break;
         }
 
+        // Combo multiplier
+        if(this.comboMultiplierTime) {
+            this.comboMultiplierTime--;
+            if(!this.comboMultiplierTime) this.comboMultiplier = 1;
+        }
+
         this.animTime++;
         if(this.animTime >= 18) this.animTime = 0;
     }
@@ -100,11 +119,28 @@ class Player extends DrawableObject {
     renderStatsTate() {
         Graphics.printString(Graphics.displayContext, 'Score', 8, 0, 2);
         Graphics.printIntRight(Graphics.displayContext, this.score, 56, 8, 0);
+
+        if(this.comboMultiplier > 1) {
+            Graphics.printString(Graphics.displayContext, 'Shrapnel Combo x', 0, 240, 0);
+            Graphics.printIntRight(Graphics.displayContext, this.comboMultiplier, 144, 240, 0);
+
+            Graphics.displayContext.fillStyle = '#0080ff';
+            Graphics.displayContext.fillRect(160, 240, this.comboMultiplierTime, 8);
+        }
     }
 
     renderStatsYoko() {
         Graphics.printString(Graphics.displayContext, 'Score', 232, 8, 2);
         Graphics.printIntRight(Graphics.displayContext, this.score, 304, 16, 0);
+
+        if(this.comboMultiplier > 1) {
+            Graphics.printString(Graphics.displayContext, 'Shrapnel', 232, 160, 0);
+            Graphics.printString(Graphics.displayContext, 'Combo x', 232, 168, 0);
+            Graphics.printIntRight(Graphics.displayContext, this.comboMultiplier, 304, 168, 0);
+
+            Graphics.displayContext.fillStyle = '#0080ff';
+            Graphics.displayContext.fillRect(232, 176, this.comboMultiplierTime, 8);
+        }
     }
 }
 

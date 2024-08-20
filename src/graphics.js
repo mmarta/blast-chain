@@ -9,6 +9,8 @@ const Graphics = {
     useVsync: false,
     spritePlayer: null,
     spriteLaser: null,
+    spriteAlien: null,
+    spriteShrapnel: null,
     font: null,
     TARGET_REFRESH_HZ: 60,
     init() {
@@ -87,9 +89,9 @@ const Graphics = {
         Graphics.printString(Graphics.displayContext, 'Loading Graphics...', 8, 8, 0);
         this.spritePlayer = await this.loadImage('gfx/blaster.png');
         this.spriteLaser = await this.loadImage('gfx/laser.png');
-        /*this.spriteAlien = await this.loadImage('gfx/alien.png');
-        this.spriteAlienLaser = await this.loadImage('gfx/alien-laser.png');
-        this.spriteAlienZap = await this.loadImage('gfx/alien-zap.png');*/
+        this.spriteAlien = await this.loadImage('gfx/alien.png');
+        this.spriteShrapnel = await this.loadImage('gfx/shrapnel.png');
+        /*this.spriteAlienLaser = await this.loadImage('gfx/alien-laser.png');*/
     },
     printString(context, str, x, y, style) {
         for(let i = 0; i < str.length; i++)

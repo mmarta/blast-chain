@@ -39,19 +39,23 @@ const Control = {
             );
         });
 
-        Graphics.display.addEventListener('mousedown', (e) => {
+        window.addEventListener('mousedown', (e) => {
             e.preventDefault();
             if(e.button === 0) this.mouseButton = true;
         });
 
-        Graphics.display.addEventListener('mouseup', (e) => {
+        window.addEventListener('mouseup', (e) => {
             e.preventDefault();
             if(e.button === 0) this.mouseButton = false;
         });
 
-        Graphics.display.addEventListener('mousemove', (e) => {
+        window.addEventListener('mousemove', (e) => {
             e.preventDefault();
-            this.setControlPos(e.offsetX, e.offsetY);
+            const rect = Graphics.display.getBoundingClientRect();
+            this.setControlPos(
+                e.clientX - rect.left,
+                e.clientY - rect.top
+            );
         });
 
         Graphics.display.addEventListener('mouseleave', (e) => {
