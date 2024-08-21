@@ -1,52 +1,98 @@
 (function() {
-    let gameMode = true, enemyGenTimeout = 10;
+    let gameMode = false, enemyGenTimeout = 10, gameOverTime = 0, readyTime = 0;
 
     function update() {
         let i;
-        Background.update();
 
         if(gameMode) {
-            Collision.runAll();
+            if(gameOverTime) {
+                gameOverTime--;
+                if(!gameOverTime) {
+                    gameMode = false;
 
-            if(!enemyGenTimeout) {
-                enemyGenTimeout = 10;
-                i = Alien.pool.length;
-                while(i--) {
-                    if(!Alien.pool[i].active) {
-                        Alien.pool[i].init();
-                        break;
+                    i = player.lasers.length;
+                    while(i--) player.lasers[i].active = false;
+
+                    i = Alien.pool.length;
+                    while(i--) Alien.pool[i].active = false;
+
+                    i = Shrapnel.pool.length;
+                    while(i--) Shrapnel.pool[i].active = false;
+
+                    player.comboMultiplier = 1;
+                    player,comboMultiplierTime = 0;
+                }
+            } else if(readyTime) {
+                readyTime--;
+            } else {
+                Collision.runAll();
+                if(player.zapped) {
+                    gameOverTime = 120;
+                    return;
+                }
+
+                Background.update();
+
+                if(!enemyGenTimeout) {
+                    enemyGenTimeout = 10;
+                    i = Alien.pool.length;
+                    while(i--) {
+                        if(!Alien.pool[i].active) {
+                            Alien.pool[i].init();
+                            break;
+                        }
                     }
                 }
+                enemyGenTimeout--;
+
+                player.update();
+
+                i = Alien.pool.length;
+                while(i--) Alien.pool[i].update();
+
+                i = Shrapnel.pool.length;
+                while(i--) Shrapnel.pool[i].update();
             }
-            enemyGenTimeout--;
-
-            player.update();
-
-            i = Alien.pool.length;
-            while(i--) Alien.pool[i].update();
-
-            i = Shrapnel.pool.length;
-            while(i--) Shrapnel.pool[i].update();
         } else {
+            Background.update();
 
+            if(Control.mouseButton || (Control.usingTouch && Control.x !== null)) {
+                player.start();
+                readyTime = 60;
+                gameMode = true;
+            }
         }
     }
 
     function render() {
         let i;
         Graphics.clear();
-        Background.render();
 
         if(gameMode) {
-            player.render();
+            if(readyTime) {
+                Graphics.printString(Graphics.playAreaContext, 'Ready', 92, 104, 4);
+            } else {
+                Background.render();
 
-            i = Alien.pool.length;
-            while(i--) Alien.pool[i].render();
+                player.render();
 
-            i = Shrapnel.pool.length;
-            while(i--) Shrapnel.pool[i].render();
+                i = Alien.pool.length;
+                while(i--) Alien.pool[i].render();
+
+                i = Shrapnel.pool.length;
+                while(i--) Shrapnel.pool[i].render();
+
+                if(gameOverTime) {
+                    if(player.zapped)
+                        Graphics.printString(Graphics.playAreaContext, 'Zapped', 88, 64, 2);
+
+                    Graphics.printString(Graphics.playAreaContext, 'Game Over', 76, 104, 3);
+                }
+            }
         } else {
+            Background.render();
 
+            Graphics.printString(Graphics.playAreaContext, 'Blast Chain', 68, 32, 7);
         }
 
         Graphics.finishRender();

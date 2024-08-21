@@ -22,6 +22,13 @@ const Collision = {
                     }
                 }
             }
+
+            if(Alien.pool[i].isCollidable() && player.isCollidable()) {
+                if(this.check(Alien.pool[i], player.hitbox)) {
+                    player.zapped = true;
+                    break;
+                }
+            }
         }
 
         i = Shrapnel.pool.length;
@@ -35,6 +42,13 @@ const Collision = {
                         Alien.pool[j].zap(true);
                         break;
                     }
+                }
+            }
+
+            if(Shrapnel.pool[i].active && player.isCollidable()) {
+                if(this.check(Shrapnel.pool[i], player.hitbox)) {
+                    player.zapped = true;
+                    break;
                 }
             }
         }

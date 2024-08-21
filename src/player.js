@@ -11,6 +11,12 @@ class Player extends DrawableObject {
         this.comboMultiplier = 1;
         this.comboMultiplierTime = 0;
         this.laserTime = 0;
+        this.hitbox = {
+            x: 0,
+            y: 0,
+            w: 8,
+            h: 8
+        },
         this.lasers = [
             new PlayerLaser(),
             new PlayerLaser(),
@@ -29,7 +35,12 @@ class Player extends DrawableObject {
         this.sX = 0;
         this.animTime = 0;
         this.score = 0;
+        this.zapped = false;
+        this.comboMultiplier = 1;
+        this.comboMultiplierTime = 0;
         this.laserTime = 0;
+        this.hitbox.x = this.x + 4;
+        this.hitbox.y = this.y + 4;
         this.active = true;
     }
 
@@ -51,6 +62,7 @@ class Player extends DrawableObject {
         // Movement controls
         const centerX = this.x + (Player.SPRITE_SIZE >> 1);
         if(Control.x === null);
+        // else this.x = Control.x - (Player.SPRITE_SIZE >> 1);
         else if(Control.x >= centerX + 32) this.x += 4;
         else if(Control.x >= centerX + 4) this.x += 2;
         else if(Control.x >= centerX + 1) this.x += 1;
@@ -60,6 +72,9 @@ class Player extends DrawableObject {
 
         if(this.x < 8) this.x = 8;
         else if(this.x > 200) this.x = 200;
+
+        this.hitbox.x = this.x + 4;
+        this.hitbox.y = this.y + 4;
 
         // Laser controls
         if(Control.mouseButton || (Control.usingTouch && Control.x)) {
@@ -141,6 +156,10 @@ class Player extends DrawableObject {
             Graphics.displayContext.fillStyle = '#0080ff';
             Graphics.displayContext.fillRect(232, 176, this.comboMultiplierTime, 8);
         }
+    }
+
+    isCollidable() {
+        return this.active && !this.zapped;
     }
 }
 
