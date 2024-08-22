@@ -14,8 +14,8 @@ class Player extends DrawableObject {
         this.hitbox = {
             x: 0,
             y: 0,
-            w: 8,
-            h: 8
+            w: 4,
+            h: 5
         },
         this.lasers = [
             new PlayerLaser(),
@@ -33,14 +33,15 @@ class Player extends DrawableObject {
         if(!this.x) this.x = Player.START_X;
         else this.x = Control.x;
         this.sX = 0;
+        this.x = (Graphics.playArea.width - this.w) >> 1;
         this.animTime = 0;
         this.score = 0;
         this.zapped = false;
         this.comboMultiplier = 1;
         this.comboMultiplierTime = 0;
         this.laserTime = 0;
-        this.hitbox.x = this.x + 4;
-        this.hitbox.y = this.y + 4;
+        this.hitbox.x = this.x + 6;
+        this.hitbox.y = this.y + 6;
         this.active = true;
     }
 
@@ -73,8 +74,8 @@ class Player extends DrawableObject {
         if(this.x < 8) this.x = 8;
         else if(this.x > 200) this.x = 200;
 
-        this.hitbox.x = this.x + 4;
-        this.hitbox.y = this.y + 4;
+        this.hitbox.x = this.x + 6;
+        this.hitbox.y = this.y + 6;
 
         // Laser controls
         if(Control.mouseButton || (Control.usingTouch && Control.x)) {

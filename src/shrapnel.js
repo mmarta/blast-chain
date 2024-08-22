@@ -8,50 +8,52 @@ class Shrapnel extends DrawableObject {
         this.speedY = 0;
     }
 
-    init(x, y, dir) {
+    init(x, y, dir, speed) {
         this.x = x;
         this.y = y;
+
+        const speedFactor = speed > 3 ? 6 : 4;
 
         switch(dir) {
             case Shrapnel.UP:
                 this.sX = 24;
                 this.speedX = 0;
-                this.speedY = -4;
+                this.speedY = -speedFactor;
                 break;
             case Shrapnel.DOWN:
                 this.sX = 24;
                 this.speedX = 0;
-                this.speedY = 4;
+                this.speedY = speedFactor;
                 break;
             case Shrapnel.LEFT:
                 this.sX = 16;
-                this.speedX = -4;
+                this.speedX = -speedFactor;
                 this.speedY = 0;
                 break;
             case Shrapnel.RIGHT:
                 this.sX = 16;
-                this.speedX = 4;
+                this.speedX = speedFactor;
                 this.speedY = 0;
                 break;
             case Shrapnel.UP_LEFT:
                 this.sX = 8;
-                this.speedX = -3;
-                this.speedY = -3;
+                this.speedX = -(speedFactor - 1);
+                this.speedY = -(speedFactor - 1);
                 break;
             case Shrapnel.DOWN_RIGHT:
                 this.sX = 8;
-                this.speedX = 3;
-                this.speedY = 3;
+                this.speedX = (speedFactor - 1);
+                this.speedY = (speedFactor - 1);
                 break;
             case Shrapnel.UP_RIGHT:
                 this.sX = 0;
-                this.speedX = 3;
-                this.speedY = -3;
+                this.speedX = (speedFactor - 1);
+                this.speedY = -(speedFactor - 1);
                 break;
             default:
                 this.sX = 0;
-                this.speedX = -3;
-                this.speedY = 3;
+                this.speedX = -(speedFactor - 1);
+                this.speedY = (speedFactor - 1);
         }
         this.dir = dir;
         this.active = true;

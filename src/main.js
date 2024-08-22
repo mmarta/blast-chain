@@ -1,5 +1,5 @@
 (function() {
-    let gameMode = false, enemyGenTimeout = 10, gameOverTime = 0, readyTime = 0;
+    let gameMode = false, enemyGenTimeout = 10, gameOverTime = 0, readyTime = 0, speedUpTimeout, speed;
 
     function update() {
         let i;
@@ -20,25 +20,31 @@
                     while(i--) Shrapnel.pool[i].active = false;
 
                     player.comboMultiplier = 1;
-                    player,comboMultiplierTime = 0;
+                    player.comboMultiplierTime = 0;
                 }
             } else if(readyTime) {
                 readyTime--;
             } else {
                 Collision.runAll();
-                if(player.zapped) {
+                if(player.zapped || Alien.missed >= 5) {
                     gameOverTime = 120;
                     return;
                 }
 
+                if(!speedUpTimeout) {
+                    speedUpTimeout = 900;
+                    speed++;
+                }
+                speedUpTimeout--;
+
                 Background.update();
 
                 if(!enemyGenTimeout) {
-                    enemyGenTimeout = 10;
+                    enemyGenTimeout = (20 / speed) >> 0;
                     i = Alien.pool.length;
                     while(i--) {
                         if(!Alien.pool[i].active) {
-                            Alien.pool[i].init();
+                            Alien.pool[i].init(speed);
                             break;
                         }
                     }
@@ -59,6 +65,10 @@
             if(Control.mouseButton || (Control.usingTouch && Control.x !== null)) {
                 player.start();
                 readyTime = 60;
+                enemyGenTimeout = (20 / speed) >> 0;
+                speed = 2;
+                speedUpTimeout = 900;
+                Alien.missed = 0;
                 gameMode = true;
             }
         }
@@ -82,9 +92,19 @@
                 i = Shrapnel.pool.length;
                 while(i--) Shrapnel.pool[i].render();
 
+                if(Graphics.tate) {
+                    Graphics.printString(Graphics.displayContext, 'Missed', 88, 0, 1);
+                    Graphics.printIntRight(Graphics.displayContext, Alien.missed, 108, 8, 0);
+                } else {
+                    Graphics.printString(Graphics.displayContext, 'Missed', 232, 136, 2);
+                    Graphics.printIntRight(Graphics.displayContext, Alien.missed, 304, 144, 0);
+                }
+
                 if(gameOverTime) {
                     if(player.zapped)
                         Graphics.printString(Graphics.playAreaContext, 'Zapped', 88, 64, 2);
+                    else if(Alien.missed >= 5)
+                        Graphics.printString(Graphics.playAreaContext, 'Missed 5', 80, 64, 2);
 
                     Graphics.printString(Graphics.playAreaContext, 'Game Over', 76, 104, 3);
                 }

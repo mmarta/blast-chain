@@ -8,22 +8,37 @@ class Alien extends DrawableObject {
         this.score = 0;
         this.displayScore = null;
         this.displayCombo = false;
+        this.speedX = 0;
+        this.speedY = 0;
+        this.speed = 0;
+        this.speedTimeout = 0;
         this.w = Alien.SPRITE_SIZE;
         this.h = Alien.SPRITE_SIZE;
     }
 
-    init() {
+    init(speed) {
         this.x = (Math.random() * 208) >> 0;
         this.y = -16;
         this.sX = 0;
         this.color = (Math.random() * 4) >> 0;
         this.score = 100 + (this.color * 100);
         this.sY = this.color * Alien.SPRITE_SIZE;
+        this.speed = speed;
+        this.resetSpeeds();
         this.zapTime = 0;
         this.animTime = 0;
         this.displayCombo = false;
         this.displayScore = null;
         this.active = true;
+    }
+
+    resetSpeeds(dir) {
+        if(dir === 'l') this.speedX = ((Math.random() * (this.speed + 1)) >> 0) - this.speed;
+        else if(dir === 'r') this.speedX = ((Math.random() * (this.speed + 1)) >> 0);
+        else this.speedX = ((Math.random() * ((this.speed + 1) << 1)) >> 0) - this.speed;
+
+        this.speedY = ((Math.random() * this.speed) >> 0) + 1;
+        this.speedTimeout = 60;
     }
 
     update() {
@@ -59,11 +74,21 @@ class Alien extends DrawableObject {
             return;
         }
 
-        this.y += 2;
+        if(!this.speedTimeout) this.resetSpeeds();
+        this.speedTimeout--;
+
+        this.y += this.speedY;
         if(this.y >= Graphics.playArea.height) {
             this.active = false;
+            Alien.missed++;
             return;
         }
+
+        this.x += this.speedX;
+        if(this.x + this.w + 8 >= Graphics.playArea.width)
+            this.resetSpeeds('l');
+        else if(this.x - 8 <= 0)
+            this.resetSpeeds('r');
 
         switch(this.animTime) {
             case 0:
@@ -190,3 +215,5 @@ Alien.poolInit = function() {
     let i = Alien.pool.length;
     while(i--) Alien.pool[i] = new Alien();
 }
+
+Alien.missed = 0;
