@@ -134,10 +134,10 @@ class Alien extends DrawableObject {
                     if(!Shrapnel.pool[i].active) {
                         switch(shrapnelCount) {
                             case 2:
-                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.LEFT);
+                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.LEFT, this.speed);
                                 break;
                             case 1:
-                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.RIGHT);
+                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.RIGHT, this.speed);
                                 break;
                         }
                         shrapnelCount--;
@@ -151,16 +151,16 @@ class Alien extends DrawableObject {
                     if(!Shrapnel.pool[i].active) {
                         switch(shrapnelCount) {
                             case 4:
-                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.DOWN_LEFT);
+                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.DOWN_LEFT, this.speed);
                                 break;
                             case 3:
-                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.DOWN_RIGHT);
+                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.DOWN_RIGHT, this.speed);
                                 break;
                             case 2:
-                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.UP_LEFT);
+                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.UP_LEFT, this.speed);
                                 break;
                             case 1:
-                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.UP_RIGHT);
+                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.UP_RIGHT, this.speed);
                                 break;
                         }
                         shrapnelCount--;
@@ -174,22 +174,22 @@ class Alien extends DrawableObject {
                     if(!Shrapnel.pool[i].active) {
                         switch(shrapnelCount) {
                             case 6:
-                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.DOWN);
+                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.DOWN, this.speed);
                                 break;
                             case 5:
-                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.DOWN_LEFT);
+                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.DOWN_LEFT, this.speed);
                                 break;
                             case 4:
-                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.DOWN_RIGHT);
+                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.DOWN_RIGHT, this.speed);
                                 break;
                             case 3:
-                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.UP);
+                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.UP, this.speed);
                                 break;
                             case 2:
-                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.UP_LEFT);
+                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.UP_LEFT, this.speed);
                                 break;
                             case 1:
-                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.UP_RIGHT);
+                                Shrapnel.pool[i].init(this.x + 4, this.y + 4, Shrapnel.UP_RIGHT, this.speed);
                                 break;
                         }
                         shrapnelCount--;
@@ -202,6 +202,9 @@ class Alien extends DrawableObject {
         this.zapTime = 1;
         this.displayCombo = displayCombo;
         this.displayScore = `${this.score * player.comboMultiplier}`;
+        
+        AudioSystem.alienZap.stop();
+        AudioSystem.alienZap.play();
     }
 
     isCollidable() {

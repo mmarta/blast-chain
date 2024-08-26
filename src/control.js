@@ -2,13 +2,13 @@ const Control = {
     codes: {},
     touchPos: null,
     controller: null,
-    touchEndedToStart: false,
+    pressEndedToStart: false,
     x: null,
     y: null,
     mouseButton: false,
     usingTouch: false,
     init() {
-        Graphics.display.addEventListener('touchstart', (e) => {
+        window.addEventListener('touchstart', (e) => {
             e.preventDefault();
 
             if(!this.usingTouch) this.usingTouch = true;
@@ -20,16 +20,16 @@ const Control = {
             );
         });
 
-        Graphics.display.addEventListener('touchend', (e) => {
+        window.addEventListener('touchend', (e) => {
             e.preventDefault();
             if(!e.targetTouches[0]) {
-                this.touchEndedToStart = true;
+                this.pressEndedToStart = true;
                 this.x = null;
                 this.y = null;
             }
         });
 
-        Graphics.display.addEventListener('touchmove', (e) => {
+        window.addEventListener('touchmove', (e) => {
             e.preventDefault();
 
             const rect = Graphics.display.getBoundingClientRect();
@@ -46,7 +46,10 @@ const Control = {
 
         window.addEventListener('mouseup', (e) => {
             e.preventDefault();
-            if(e.button === 0) this.mouseButton = false;
+            if(e.button === 0) {
+                this.mouseButton = false;
+                this.pressEndedToStart = true;
+            }
         });
 
         window.addEventListener('mousemove', (e) => {

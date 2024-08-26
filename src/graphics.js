@@ -91,7 +91,6 @@ const Graphics = {
         this.spriteLaser = await this.loadImage('gfx/laser.png');
         this.spriteAlien = await this.loadImage('gfx/alien.png');
         this.spriteShrapnel = await this.loadImage('gfx/shrapnel.png');
-        /*this.spriteAlienLaser = await this.loadImage('gfx/alien-laser.png');*/
     },
     printString(context, str, x, y, style) {
         for(let i = 0; i < str.length; i++)

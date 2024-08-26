@@ -26,6 +26,7 @@ const Collision = {
             if(Alien.pool[i].isCollidable() && player.isCollidable()) {
                 if(this.check(Alien.pool[i], player.hitbox)) {
                     player.zapped = true;
+                    AudioSystem.playerZap.play();
                     break;
                 }
             }
@@ -48,6 +49,7 @@ const Collision = {
             if(Shrapnel.pool[i].active && player.isCollidable()) {
                 if(this.check(Shrapnel.pool[i], player.hitbox)) {
                     player.zapped = true;
+                    AudioSystem.playerZap.play();
                     break;
                 }
             }

@@ -13,6 +13,9 @@ class PlayerLaser extends DrawableObject {
         this.y = y;
         this.animTime = 0;
         this.active = true;
+        
+        AudioSystem.playerFire.stop();
+        AudioSystem.playerFire.play();
     }
 
     update() {

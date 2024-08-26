@@ -21,13 +21,18 @@
 
                     player.comboMultiplier = 1;
                     player.comboMultiplierTime = 0;
+
+                    Control.pressEndedToStart = false;
+                    Background.refresh();
                 }
             } else if(readyTime) {
                 readyTime--;
+                if(!readyTime) AudioSystem.bgm.play();
             } else {
                 Collision.runAll();
                 if(player.zapped || Alien.missed >= 5) {
                     gameOverTime = 120;
+                    AudioSystem.bgm.stop();
                     return;
                 }
 
@@ -62,13 +67,15 @@
         } else {
             Background.update();
 
-            if(Control.mouseButton || (Control.usingTouch && Control.x !== null)) {
+            if(Control.pressEndedToStart) {
                 player.start();
                 readyTime = 60;
                 enemyGenTimeout = (20 / speed) >> 0;
                 speed = 2;
                 speedUpTimeout = 900;
                 Alien.missed = 0;
+                Background.refresh();
+                Control.pressEndedToStart = false;
                 gameMode = true;
             }
         }
@@ -113,6 +120,26 @@
             Background.render();
 
             Graphics.printString(Graphics.playAreaContext, 'Blast Chain', 68, 32, 7);
+
+            Graphics.printString(Graphics.playAreaContext, 'Touch', 8, 72, 8);
+            Graphics.printString(Graphics.playAreaContext, 'Mouse Move', 8, 80, 8);
+            Graphics.printString(Graphics.playAreaContext, 'Move', 184, 80, 0);
+
+            Graphics.printString(Graphics.playAreaContext, 'Touch', 8, 96, 8);
+            Graphics.printString(Graphics.playAreaContext, 'Mouse Button 1 Click', 8, 104, 8);
+            Graphics.printString(Graphics.playAreaContext, 'Fire', 184, 104, 0);
+
+            Graphics.printString(Graphics.playAreaContext, 'Click or tap release to play', 0, 144, 5);
+
+            Graphics.printString(Graphics.playAreaContext, 'By Marc Marta', 60, 168, 3);
+            Graphics.printString(Graphics.playAreaContext, 'Howler.js Audio Handling', 16, 176, 3);
+            Graphics.printString(Graphics.playAreaContext, 'Inspired by Japan', 44, 184, 0);
+            Graphics.printString(Graphics.playAreaContext, 'Made in New York', 48, 192, 1);
+
+            if(Graphics.useVsync)
+                Graphics.printString(Graphics.playAreaContext, 'Using 60Hz Vsync', 48, 208, 0);
+            else
+                Graphics.printString(Graphics.playAreaContext, '60Hz Vsync Unavailable', 24, 208, 7);
         }
 
         Graphics.finishRender();
@@ -131,6 +158,7 @@
 
         try {
             await Graphics.loadGraphics();
+            await AudioSystem.init();
             await Graphics.testAndSetRefreshMode();
 
             Control.init();
