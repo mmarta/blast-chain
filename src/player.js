@@ -133,29 +133,29 @@ class Player extends DrawableObject {
     }
 
     renderStatsTate() {
-        Graphics.printString(Graphics.displayContext, 'Score', 8, 0, 2);
-        Graphics.printIntRight(Graphics.displayContext, this.score, 56, 8, 0);
+        Graphics.printString(Graphics.preRenderContext, 'Score', 8, 0, 2);
+        Graphics.printIntRight(Graphics.preRenderContext, this.score, 56, 8, 0);
 
         if(this.comboMultiplier > 1) {
-            Graphics.printString(Graphics.displayContext, 'Shrapnel Combo x', 0, 240, 0);
-            Graphics.printIntRight(Graphics.displayContext, this.comboMultiplier, 144, 240, 0);
+            Graphics.printString(Graphics.preRenderContext, 'Shrapnel Combo x', 0, 240, 0);
+            Graphics.printIntRight(Graphics.preRenderContext, this.comboMultiplier, 144, 240, 0);
 
-            Graphics.displayContext.fillStyle = '#0080ff';
-            Graphics.displayContext.fillRect(160, 240, this.comboMultiplierTime, 8);
+            Graphics.preRenderContext.fillStyle = '#0080ff';
+            Graphics.preRenderContext.fillRect(160, 240, this.comboMultiplierTime, 8);
         }
     }
 
     renderStatsYoko() {
-        Graphics.printString(Graphics.displayContext, 'Score', 232, 8, 2);
-        Graphics.printIntRight(Graphics.displayContext, this.score, 304, 16, 0);
+        Graphics.printString(Graphics.preRenderContext, 'Score', 232, 8, 2);
+        Graphics.printIntRight(Graphics.preRenderContext, this.score, 304, 16, 0);
 
         if(this.comboMultiplier > 1) {
-            Graphics.printString(Graphics.displayContext, 'Shrapnel', 232, 160, 0);
-            Graphics.printString(Graphics.displayContext, 'Combo x', 232, 168, 0);
-            Graphics.printIntRight(Graphics.displayContext, this.comboMultiplier, 304, 168, 0);
+            Graphics.printString(Graphics.preRenderContext, 'Shrapnel', 232, 160, 0);
+            Graphics.printString(Graphics.preRenderContext, 'Combo x', 232, 168, 0);
+            Graphics.printIntRight(Graphics.preRenderContext, this.comboMultiplier, 304, 168, 0);
 
-            Graphics.displayContext.fillStyle = '#0080ff';
-            Graphics.displayContext.fillRect(232, 176, this.comboMultiplierTime, 8);
+            Graphics.preRenderContext.fillStyle = '#0080ff';
+            Graphics.preRenderContext.fillRect(232, 176, this.comboMultiplierTime, 8);
         }
     }
 

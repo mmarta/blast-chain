@@ -100,11 +100,11 @@
                 while(i--) Shrapnel.pool[i].render();
 
                 if(Graphics.tate) {
-                    Graphics.printString(Graphics.displayContext, 'Missed', 88, 0, 1);
-                    Graphics.printIntRight(Graphics.displayContext, Alien.missed, 108, 8, 0);
+                    Graphics.printString(Graphics.preRenderContext, 'Missed', 88, 0, 1);
+                    Graphics.printIntRight(Graphics.preRenderContext, Alien.missed, 108, 8, 0);
                 } else {
-                    Graphics.printString(Graphics.displayContext, 'Missed', 232, 136, 2);
-                    Graphics.printIntRight(Graphics.displayContext, Alien.missed, 304, 144, 0);
+                    Graphics.printString(Graphics.preRenderContext, 'Missed', 232, 136, 2);
+                    Graphics.printIntRight(Graphics.preRenderContext, Alien.missed, 304, 144, 0);
                 }
 
                 if(gameOverTime) {
@@ -170,16 +170,17 @@
             Graphics.nextFrame(mainLoop);
         } catch(ex) {
             console.error(ex);
-            Graphics.displayContext.fillStyle = '#000';
-            Graphics.displayContext.fillRect(0, 0, Graphics.display.width, Graphics.display.height);
+            Graphics.preRenderContext.fillStyle = '#000';
+            Graphics.preRenderContext.fillRect(0, 0, Graphics.display.width, Graphics.display.height);
             if(Graphics.font) {
-                Graphics.printString(Graphics.displayContext, ex.error, 8, 8, 1);
-                Graphics.printString(Graphics.displayContext, ex.file, 16, 16, 2);
+                Graphics.printString(Graphics.preRenderContext, ex.error, 8, 8, 1);
+                Graphics.printString(Graphics.preRenderContext, ex.file, 16, 16, 2);
             } else {
-                Graphics.displayContext.fillStyle = '#ff0000';
-                Graphics.displayContext.font = "16px Arial";
-                Graphics.displayContext.fillText('Could not load font.', 20, 20);
+                Graphics.preRenderContext.fillStyle = '#ff0000';
+                Graphics.preRenderContext.font = "16px Arial";
+                Graphics.preRenderContext.fillText('Could not load font.', 20, 20);
             }
+            Graphics.renderToDisplay();
         }
     }
 

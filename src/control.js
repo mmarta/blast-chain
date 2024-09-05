@@ -68,8 +68,8 @@ const Control = {
         });
     },
     setControlPos(x, y) {
-        const xRatio = Graphics.screenW / Graphics.display.width;
-        const yRatio = Graphics.screenH / Graphics.display.height;
+        const xRatio = Graphics.screenW / Graphics.preRender.width;
+        const yRatio = Graphics.screenH / Graphics.preRender.height;
         this.x = (x / xRatio) >> 0;
         this.y = (y / yRatio) >> 0;
     }

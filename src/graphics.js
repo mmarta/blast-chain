@@ -1,12 +1,15 @@
 const Graphics = {
     display: document.getElementById('game-canvas'),
     displayContext: null,
+    preRender: document.createElement('canvas'),
+    preRenderContext: null,
     playArea: document.createElement('canvas'),
     playAreaContext: null,
     screenW: 0,
     screenH: 0,
     tate: null,
     useVsync: false,
+    preRenderScale: 1,
     spritePlayer: null,
     spriteLaser: null,
     spriteAlien: null,
@@ -15,7 +18,9 @@ const Graphics = {
     TARGET_REFRESH_HZ: 60,
     init() {
         this.displayContext = this.display.getContext('2d');
+        this.preRenderContext = this.preRender.getContext('2d');
         this.playAreaContext = this.playArea.getContext('2d');
+        this.displayContext.imageSmoothingEnabled = false;
         this.playArea.width = 224;
         this.playArea.height = 224;
         window.addEventListener('resize', () => {
@@ -24,7 +29,8 @@ const Graphics = {
         this.displayResize();
     },
     testAndSetRefreshMode() {
-        Graphics.printString(Graphics.displayContext, 'Testing Vsync...', 8, 24, 4);
+        this.printString(this.preRenderContext, 'Testing Vsync...', 8, 24, 4);
+        this.renderToDisplay();
 
         const now = Date.now();
         let frameCount = 0;
@@ -50,16 +56,21 @@ const Graphics = {
         this.tate = (window.innerHeight > window.innerWidth);
 
         if(this.tate) {
-            this.display.width = 224;
-            this.display.height = 256;
-            wRatio = (window.innerWidth / this.display.width);
-            hRatio = (window.innerHeight / this.display.height);
+            this.preRender.width = 224;
+            this.preRender.height = 256;
         } else {
-            this.display.width = 320;
-            this.display.height = 224;
-            wRatio = (window.innerWidth / this.display.width);
-            hRatio = (window.innerHeight / this.display.height);
+            this.preRender.width = 320;
+            this.preRender.height = 224;
         }
+
+        // Ratio calcs for preRenderScale and ultimate scale
+        wRatio = (window.innerWidth / this.preRender.width) >> 0;
+        hRatio = (window.innerHeight / this.preRender.height) >> 0;
+        this.preRenderScale = wRatio > hRatio ? hRatio : wRatio;
+        this.display.width = this.preRender.width * this.preRenderScale;
+        this.display.height = this.preRender.height * this.preRenderScale;
+        wRatio = (window.innerWidth / this.display.width);
+        hRatio = (window.innerHeight / this.display.height);
 
         if(wRatio < 1) wRatio = 1;
         if(hRatio < 1) hRatio = 1;
@@ -69,6 +80,7 @@ const Graphics = {
         this.screenH = (this.display.height * chosenRatio) >> 0;
         this.display.style.width = `${this.screenW}px`;
         this.display.style.height = `${this.screenH}px`;
+        this.displayContext.imageSmoothingEnabled = false;
     },
     loadImage(src) {
         const img = new Image();
@@ -84,9 +96,10 @@ const Graphics = {
     },
     async loadGraphics() {
         this.font = await this.loadImage('gfx/font.png');
-        this.displayContext.fillStyle = '#000';
-        this.displayContext.fillRect(0, 0, this.display.width, this.display.height);
-        Graphics.printString(Graphics.displayContext, 'Loading Graphics...', 8, 8, 0);
+        this.preRenderContext.fillStyle = '#000';
+        this.preRenderContext.fillRect(0, 0, this.display.width, this.display.height);
+        this.printString(this.preRenderContext, 'Loading Graphics...', 8, 8, 0);
+        this.renderToDisplay();
         this.spritePlayer = await this.loadImage('gfx/blaster.png');
         this.spriteLaser = await this.loadImage('gfx/laser.png');
         this.spriteAlien = await this.loadImage('gfx/alien.png');
@@ -121,46 +134,54 @@ const Graphics = {
     drawStatsTate() {
         player.renderStatsTate();
 
-        Graphics.printString(Graphics.displayContext, 'HI', 184, 0, 3);
-        Graphics.printIntRight(Graphics.displayContext, System.hi, 216, 8, 0);
+        this.printString(this.preRenderContext, 'HI', 184, 0, 3);
+        this.printIntRight(this.preRenderContext, System.hi, 216, 8, 0);
 
-        Graphics.printString(Graphics.displayContext, '@2024', 44, 248, 0);
-        Graphics.printString(Graphics.displayContext, 'Red Balltop', 92, 248, 1);
+        this.printString(this.preRenderContext, '@2024', 44, 248, 0);
+        this.printString(this.preRenderContext, 'Red Balltop', 92, 248, 1);
     },
     drawStatsYoko() {
-        this.displayContext.fillStyle = '#00f';
-        this.displayContext.fillRect(224, 0, 1, this.display.height);
+        this.preRenderContext.fillStyle = '#00f';
+        this.preRenderContext.fillRect(224, 0, 1, this.display.height);
 
         player.renderStatsYoko();
 
-        Graphics.printString(Graphics.displayContext, 'HI', 232, 40, 3);
-        Graphics.printIntRight(Graphics.displayContext, System.hi, 304, 48, 0);
+        this.printString(this.preRenderContext, 'HI', 232, 40, 3);
+        this.printIntRight(this.preRenderContext, System.hi, 304, 48, 0);
 
-        Graphics.printString(Graphics.displayContext, '@2024', 232, 192, 0);
-        Graphics.printString(Graphics.displayContext, 'Red', 280, 192, 1);
-        Graphics.printString(Graphics.displayContext, 'Balltop', 232, 200, 1);
+        this.printString(this.preRenderContext, '@2024', 232, 192, 0);
+        this.printString(this.preRenderContext, 'Red', 280, 192, 1);
+        this.printString(this.preRenderContext, 'Balltop', 232, 200, 1);
     },
     clear() {
         // Clear Play Area
         this.playAreaContext.fillStyle = '#000';
         this.playAreaContext.fillRect(0, 0, this.playArea.width, this.playArea.height);
 
-        this.displayContext.fillStyle = '#000';
+        this.preRenderContext.fillStyle = '#000';
         if(this.tate) {
-            this.displayContext.fillRect(0, 0, this.display.width, 16);
-            this.displayContext.fillRect(0, 16 + this.playArea.height, this.display.width, this.display.height - 16 - this.playArea.height);
+            this.preRenderContext.fillRect(0, 0, this.display.width, 16);
+            this.preRenderContext.fillRect(0, 16 + this.playArea.height, this.display.width, this.display.height - 16 - this.playArea.height);
         } else {
             // Clear yoko
-            this.displayContext.fillRect(224, 0, this.display.width - 224, this.display.height);
+            this.preRenderContext.fillRect(224, 0, this.display.width - 224, this.display.height);
         }
     },
     finishRender() {
         if(this.tate) {
-            this.displayContext.drawImage(this.playArea, 0, 16, this.playArea.width, this.playArea.height);
+            this.preRenderContext.drawImage(this.playArea, 0, 16, this.playArea.width, this.playArea.height);
             this.drawStatsTate();
         } else {
-            this.displayContext.drawImage(this.playArea, 0, 0, this.playArea.width, this.playArea.height);
+            this.preRenderContext.drawImage(this.playArea, 0, 0, this.playArea.width, this.playArea.height);
             this.drawStatsYoko();
         }
+
+        this.renderToDisplay();
+    },
+    renderToDisplay() {
+        this.displayContext.drawImage(
+            this.preRender, 0, 0, this.preRender.width, this.preRender.height,
+            0, 0, this.display.width, this.display.height
+        );
     }
 };
